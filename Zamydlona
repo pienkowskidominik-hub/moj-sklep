@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Sklep – Szczegóły Produktu</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin:0;
+    background-color:#f5f5f5;
+    color:#333;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    min-height:100vh;
+    opacity:0;
+    animation: fadeIn 1s forwards;
+}
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+
+header{background-color:#4CAF50;color:white;padding:20px;text-align:center;width:100%;}
+nav{background-color:#333;width:100%;display:flex;justify-content:center;flex-wrap:wrap;}
+nav a{color:white;padding:14px 16px;text-decoration:none;text-align:center;transition:0.3s;}
+nav a:hover{background-color:#ddd;color:black;}
+section{display:none;padding:20px;max-width:1000px;width:100%;text-align:center;opacity:0;transition:opacity 0.5s ease;}
+section.active{display:block;opacity:1;}
+
+.products {
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:20px;
+}
+.product {
+    background-color:white;
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:15px;
+    width:calc(20% - 20px); /* 5 produktów w rzędzie */
+    text-align:center;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+    cursor:pointer;
+    transition:transform 0.3s ease;
+}
+.product:hover {transform:translateY(-5px);}
+.product img {
+    width:150px; /* mniejszy obraz */
+    height:auto;
+    border-radius:10px;
+}
+
+.product-detail-container {
+    display: flex;
+    flex-wrap: wrap;
+    background-color:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    gap:20px;
+}
+
+.product-detail-image {
+    flex:1;
+    min-width:300px;
+}
+
+.product-detail-image img {width:100%; border-radius:10px;}
+
+.product-detail-info {
+    flex:1;
+    min-width:200px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+}
+
+.product-detail-info h3 {margin-top:0;}
+
+#config-options {display:none; flex-direction:column; gap:10px; margin-top:10px;}
+
+select,input[type="text"]{margin-top:5px;padding:8px;width:100%;border-radius:5px;border:1px solid #ccc;cursor:pointer;}
+button{background-color:#4CAF50;color:white;border:none;transition:0.3s;margin-top:10px;padding:10px;width:100%;border-radius:5px;cursor:pointer;}
+button:hover{background-color:#45a049;}
+
+.cart-item{display:flex;justify-content:space-between;align-items:center;background-color:#fff;padding:10px 15px;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,0.1);margin-bottom:10px;}
+.cart-item p{margin:0;font-weight:bold;}
+.cart-item small{color:#666;font-weight:normal;}
+.cart-item button{background-color:red;color:white;border:none;border-radius:5px;padding:5px 10px;cursor:pointer;transition:0.3s;}
+.cart-item button:hover{background-color:darkred;}
+#cart-summary{font-weight:bold;font-size:1.1em;text-align:right;margin-top:10px;}
+
+footer{text-align:center;padding:10px;background-color:#eee;color:#555;width:100%;margin-top:auto;}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Zamydlona - handmade soap</h1>
+<p>Wybierz produkt i zobacz szczegóły</p>
+</header>
+
+<nav>
+<a href="#" onclick="showSection('home')">Strona główna</a>
+<a href="#" onclick="showSection('cart')">Koszyk 🛒</a>
+<a href="#" onclick="showSection('regulamin')">Regulamin</a>
+<a href="#" onclick="showSection('kontakt')">Kontakt</a>
+<a href="#" onclick="showSection('omnie')">O mnie</a>
+</nav>
+
+<section id="home" class="active">
+<h2>Produkty</h2>
+<div class="products">
+    <div class="product" onclick="showProductDetail(0)">
+        <img src="images/produkt1.jpg" alt="Produkt 1">
+        <h3>Produkt 1</h3>
+        <p>50 zł</p>
+    </div>
+    <div class="product" onclick="showProductDetail(1)">
+        <img src="images/produkt2.jpg" alt="Produkt 2">
+        <h3>Produkt 2</h3>
+        <p>80 zł</p>
+    </div>
+    <div class="product" onclick="showProductDetail(2)">
+        <img src="images/produkt1.jpg" alt="Produkt 3">
+        <h3>Produkt 3</h3>
+        <p>80 zł</p>
+    </div>
+    <div class="product" onclick="showProductDetail(3)">
+        <img src="images/produkt1.jpg" alt="Produkt 4">
+        <h3>Produkt 4</h3>
+        <p>80 zł</p>
+    </div>
+    <div class="product" onclick="showProductDetail(4)">
+        <img src="images/produkt1.jpg" alt="Produkt 5">
+        <h3>Produkt 5</h3>
+        <p>8 zł</p>
+    </div>
+    <div class="product" onclick="showProductDetail(5)">
+        <img src="images/produkt1.jpg" alt="Produkt 6">
+        <h3>Produkt 6</h3>
+        <p>10 zł</p>
+    </div>
+</div>
+</section>
+
+<section id="product-detail"></section>
+
+<section id="cart">
+<h2>Twój Koszyk 🛒</h2>
+<div id="cart-list"></div>
+<div id="cart-summary">Łącznie: 0 zł</div>
+</section>
+
+<section id="regulamin"><h2>Regulamin Sklepu</h2><p>Tu możesz dodać treść regulaminu swojego sklepu.</p></section>
+<section id="kontakt"><h2>Kontakt</h2><p>Email: przyklad@sklep.pl</p><p>Telefon: 123-456-789</p></section>
+<section id="omnie"><h2>O mnie</h2><p>Tu możesz napisać coś o sobie lub swoim sklepie.</p></section>
+
+<footer>&copy; 2025 - Zamydlona</footer>
+
+<script>
+let cart = [];
+let products = [
+    {
+        name:'Produkt 1',
+        price:50,
+        img:'images/produkt1.jpg',
+        description:'Opis produktu 1',
+        options: {
+            baza:['Olejowa','Woskowa'],
+            naczynie:['Słoik','Butelka'],
+            barwaDominujaca:['Czerwona','Zielona','Niebieska'],
+            barwaDodatkowa:['Żółta','Biała','Czarna'],
+            dodatki:['Brokat','Kwiaty','Piasek'],
+            zapach:['Wanilia','Róża','Lawenda'],
+            waga:['100g','200g','300g']
+        }
+    },
+    {
+        name:'Produkt 2',
+        price:80,
+        img:'images/produkt2.jpg',
+        description:'Opis produktu 2',
+        options: {
+            baza:['Olejowa','Woskowa'],
+            naczynie:['Słoik','Butelka'],
+            barwaDominujaca:['Pomarańcz','Fiolet','Zielony'],
+            barwaDodatkowa:['Żółta','Biała','Czarna'],
+            dodatki:['Brokat','Kwiaty','Piasek'],
+            zapach:['Czekolada','Kawa','Mięta'],
+            waga:['150g','250g','350g']
+        }
+    }
+];
+
+function showSection(sectionId){
+    document.querySelectorAll('section').forEach(sec=>sec.classList.remove('active'));
+    document.getElementById(sectionId).classList.add('active');
+}
+
+function showProductDetail(index){
+    const p = products[index];
+    showSection('product-detail');
+    const detail = document.getElementById('product-detail');
+    detail.innerHTML = `
+        <div class="product-detail-container">
+            <div class="product-detail-image">
+                <img src="${p.img}" alt="${p.name}">
+            </div>
+            <div class="product-detail-info">
+                <h3>${p.name} - ${p.price} zł</h3>
+                <p>${p.description}</p>
+                <div id="config-options">
+                    <label>Baza:</label><select id="baza">${p.options.baza.map(o=>`<option>${o}</option>`).join('')}</select>
+                    <label>Naczynie:</label><select id="naczynie">${p.options.naczynie.map(o=>`<option>${o}</option>`).join('')}</select>
+                    <label>Barwa dominująca:</label><select id="barwaDominujaca">${p.options.barwaDominujaca.map(o=>`<option>${o}</option>`).join('')}</select>
+                    <label>Barwa dodatkowa:</label><select id="barwaDodatkowa">${p.options.barwaDodatkowa.map(o=>`<option>${o}</option>`).join('')}</select>
+                    <label>Dodatki:</label><select id="dodatki">${p.options.dodatki.map(o=>`<option>${o}</option>`).join('')}</select>
+                    <label>Zapach:</label><select id="zapach">${p.options.zapach.map(o=>`<option>${o}</option>`).join('')}</select>
+                    <label>Waga:</label><select id="waga">${p.options.waga.map(o=>`<option>${o}</option>`).join('')}</select>
+                    <button onclick="addToCartMulti('${p.name}', ${p.price})">🛒 Dodaj do koszyka</button>
+                </div>
+                <button id="show-config-btn" onclick="toggleConfig()">⚙️ Konfiguruj produkt</button>
+            </div>
+        </div>
+    `;
+    document.getElementById('config-options').style.display = 'none';
+}
+
+function toggleConfig(){
+    const config = document.getElementById('config-options');
+    if(config.style.display==='none') config.style.display='flex';
+    else config.style.display='none';
+}
+
+function addToCartMulti(name, price){
+    const variant = {
+        baza:document.getElementById('baza').value,
+        naczynie:document.getElementById('naczynie').value,
+        barwaDominujaca:document.getElementById('barwaDominujaca').value,
+        barwaDodatkowa:document.getElementById('barwaDodatkowa').value,
+        dodatki:document.getElementById('dodatki').value,
+        zapach:document.getElementById('zapach').value,
+        waga:document.getElementById('waga').value
+    };
+    cart.push({name, variant, price});
+    updateCart();
+    alert(name + " został dodany do koszyka!");
+}
+
+function updateCart(){
+    const list = document.getElementById('cart-list');
+    list.innerHTML = '';
+    let sum=0;
+    cart.forEach((item,index)=>{
+        sum+=item.price;
+        const li = document.createElement('div');
+        li.className='cart-item';
+        li.innerHTML=`<p>${item.name} <small>(${Object.values(item.variant).join(', ')})</small></p><p>${item.price} zł</p>`;
+        const btn=document.createElement('button');
+        btn.textContent='Usuń';
+        btn.onclick=()=>{cart.splice(index,1); updateCart();};
+        li.appendChild(btn);
+        list.appendChild(li);
+    });
+    document.getElementById('cart-summary').textContent=`Łącznie: ${sum} zł`;
+}
+</script>
+
+</body>
+</html>
